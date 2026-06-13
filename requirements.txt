@@ -1,6 +1,5 @@
-streamlit
+gradio
 numpy
 Pillow
 opencv-python-headless
-keras==3.5.0
-tensorflow-cpu==2.17.1
+tensorflow-cpu
