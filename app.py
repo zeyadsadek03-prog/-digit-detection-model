@@ -5,11 +5,13 @@ from PIL import Image, ImageOps
 
 model = tf.keras.models.load_model('handwritten.keras')
 
+
 def predict(image):
     if image is None:
         return {}
     if isinstance(image, dict):
         image = image['composite']
+
     img = Image.fromarray(image).convert('L')
     img = ImageOps.invert(img)
 
@@ -20,11 +22,12 @@ def predict(image):
         img = ImageOps.expand(img, border=40, fill=0)
 
     img = img.resize((28, 28))
-    arr = np.array(img)
-    arr = tf.keras.utils.normalize(arr, axis=1)  # match Colab preprocessing
-    arr = np.array([arr])  # shape (1, 28, 28) — no channel dim
-    pred = model.predict(arr)
+    arr = np.array(img).astype("float32") / 255.0
+    arr = np.array([arr])  # shape (1, 28, 28) — unchanged from original
+
+    pred = model.predict(arr, verbose=0)
     return {str(i): float(pred[0][i]) for i in range(10)}
+
 
 demo = gr.Interface(
     fn=predict,
